@@ -1,37 +1,65 @@
 import 'package:flutter/material.dart';
-import 'package:leva_ai/core/routes/rotas_app.dart';
-import 'package:leva_ai/data/datasources/fonte_remota_frete.dart';
-import 'package:leva_ai/data/repositories/repositorio_frete_impl.dart';
-import 'package:leva_ai/domain/entities/transportador_entidade.dart';
-import 'package:leva_ai/domain/usecases/obter_transportadores_caso_de_uso.dart';
-import 'package:leva_ai/presentation/freight_catalog/viewmodels/catalogo_fretes_viewmodel.dart';
-import 'package:leva_ai/presentation/freight_catalog/views/catalogo_fretes_pagina.dart';
-import 'package:leva_ai/presentation/freight_details/views/detalhes_frete_pagina.dart';
+import 'package:leva_ai/data/auth/datasources/auth_repository_mock.dart';
+import 'package:leva_ai/domain/auth/usecases/autenticar_usuario_usecase.dart';
+import 'package:leva_ai/domain/auth/usecases/cadastrar_usuario_usecase.dart';
+import 'package:leva_ai/presentation/auth/viewmodels/cadastro_viewmodel.dart';
+import 'package:leva_ai/presentation/auth/viewmodels/login_viewmodel.dart';
+import 'package:leva_ai/presentation/auth/views/cadastro_view.dart';
+import 'package:leva_ai/presentation/auth/views/login_view.dart';
+import 'package:leva_ai/presentation/onboarding/viewmodels/onboarding_viewmodel.dart';
+import 'package:leva_ai/presentation/splash/views/splash_view.dart';
 
+import '../routes/rotas_app.dart';
+import '../../presentation/onboarding/views/onboarding_view.dart';
 
-abstract final class InjecaoDependencias {
-  static final _obter = ObterTransportadoresCasoDeUso(
-    RepositorioFreteImpl(FonteRemotaFreteMock()),
-  );
-  static Route<dynamic> gerarRota(RouteSettings ajustes) {
-    switch (ajustes.name) {
+// Importe aqui a sua CatalogoFretesPagina ou LoginPagina existente
+
+class InjecaoDependencias {
+  static Route<dynamic> gerarRota(RouteSettings settings) {
+    switch (settings.name) {
       case RotasApp.inicio:
+        return MaterialPageRoute(builder: (_) => const SplashView());
+
+      case RotasApp.onboarding:
+        return MaterialPageRoute(
+          builder: (_) => OnboardingView(viewModel: OnboardingViewModel()),
+        );
+
+      case RotasApp.login:
+        final authRepo = AuthRepositoryMock();
+        return MaterialPageRoute(
+          builder: (_) => LoginView(
+            viewModel: LoginViewModel(AutenticarUsuarioUseCase(authRepo)),
+          ),
+        );
+
+      case RotasApp.entrar:
+        final authRepo = AuthRepositoryMock();
+        return MaterialPageRoute(
+          builder: (_) => CadastroView(
+            viewModel: CadastroViewModel(CadastrarUsuarioUseCase(authRepo)),
+          ),
+        );
+
       case RotasApp.catalogo:
         return MaterialPageRoute(
-          builder: (_) =>
-              CatalogoFretesPagina(viewModel: CatalogoFretesViewModel(_obter)),
+          builder: (_) => const Scaffold(
+            body: Center(
+              child: Text('CatalogoFretesPagina'),
+            ), // Troque pela sua classe real
+          ),
         );
+
       case RotasApp.detalhes:
         return MaterialPageRoute(
-          builder: (_) => DetalhesFretePagina(
-            transportador: ajustes.arguments! as TransportadorEntidade,
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Tela de Detalhes'))),
         );
+
       default:
         return MaterialPageRoute(
-          builder: (_) => const Scaffold(
-            body: Center(child: Text('Página não encontrada')),
-          ),
+          builder: (_) =>
+              const Scaffold(body: Center(child: Text('Rota não encontrada'))),
         );
     }
   }
