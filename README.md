@@ -41,3 +41,22 @@ lib/
 │   ├── repositories/      # Contratos e interfaces abstratas
 │   └── usecases/          # Casos de uso do sistema
 └──
+
+## 🌿 Fluxo de Trabalho Git (Branches & Contribuição)
+
+Adotamos o fluxo de desenvolvimento baseado em branches de funcionalidade (**Feature Branching**). A branch `develop` é a nossa base de integração contínua.
+
+### 📌 Regras Gerais
+* Ninguém desenvolve diretamente na `main` ou na `develop`.
+* Cada nova tela, componente ou regra de negócio deve ter sua própria branch a partir da `develop`.
+* Commits devem ser claros e descritivos.
+
+---
+
+### 🚀 Passo a Passo para Desenvolver uma Nova Feature
+
+#### 1. Atualize a sua base local
+Antes de criar uma branch, garanta que a sua `develop` local tem as últimas alterações do repositório remoto:
+```bash
+git switch develop
+git pull origin develop
